@@ -22,7 +22,7 @@ spec:
         - name: redis-data
           mountPath: /data  # Redis 数据存储路径
         - name: redis-config
-          mountPath: /home/ubuntu/redisFolder/redis.conf  # 挂载自定义配置文件
+          mountPath: /root/redis.conf  # 挂载自定义配置文件
           subPath: redis.conf
         command:
           - "redis-server"
