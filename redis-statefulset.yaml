@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-cluster
+spec:
+  serviceName: "redis-cluster"
+  replicas: 2  # 设置为两个副本，满足集群需求
+  selector:
+    matchLabels:
+      app: redis-cluster
+  template:
+    metadata:
+      labels:
+        app: redis-cluster
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine  # 使用官方的 Redis 镜像
+        ports:
+        - containerPort: 6379  # Redis 默认端口
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data  # Redis 数据存储路径
+        - name: redis-config
+          mountPath: /home/ubuntu/redisFolder/redis.conf  # 挂载自定义配置文件
+          subPath: redis.conf
+        command:
+          - "redis-server"
+          - "/home/ubuntu/redisFolder/redis.conf"  # 指定使用自定义的配置文件
+      volumes:
+      - name: redis-data
+        emptyDir: {}  # 使用 emptyDir 或 PVC 持久化数据
+      - name: redis-config
+        configMap:
+          name: redis-config  # 通过 ConfigMap 加载配置文件
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster
+spec:
+  selector:
+    app: redis-cluster
+  ports:
+    - protocol: TCP
+      port: 6379  # Redis 对外暴露的端口
+      targetPort: 6379
+  clusterIP: None  # 无头服务，方便 Redis 节点之间发现
+
