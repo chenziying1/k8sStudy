@@ -26,7 +26,7 @@ spec:
           subPath: redis.conf
         command:
           - "redis-server"
-          - "/home/ubuntu/redisFolder/redis.conf"  # 指定使用自定义的配置文件
+          - "/root/redis.conf"  # 指定使用自定义的配置文件
       volumes:
       - name: redis-data
         emptyDir: {}  # 使用 emptyDir 或 PVC 持久化数据
